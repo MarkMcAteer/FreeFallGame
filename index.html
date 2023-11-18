@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>crisp-game-lib</title>
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height,
+    user-scalable=no, initial-scale=1, maximum-scale=1"
+    />
+    <script src="https://unpkg.com/sounds-some-sounds@3.0.0/build/index.js"></script>
+    <script src="https://unpkg.com/gif-capture-canvas@1.1.0/build/index.js"></script>
+    <script src="https://unpkg.com/pixi.js@5.3.0/dist/pixi.min.js"></script>
+    <script src="https://unpkg.com/pixi-filters@3.1.1/dist/pixi-filters.js"></script>
+    <script src="https://unpkg.com/crisp-game-lib@1.1.1/docs/bundle.js"></script>
+
+<script>
+
+title = "Free Fall";
+
+description = `[Click/Hold]
+`;
+
+characters = [];
+
+options = {
+    theme: "shapeDark",
+};
+
+/** @type {Vector[]} */
+let player;
+
+let scr = 0.5; // The barrier movement speed
+
+let tracker = 100;
+
+
+function update() {
+    // Initiailization process of the game happens here.
+    if (!ticks) {
+        player = [vec(50, 20)];  // The starting positions 
+        greenBarrier = [vec(0, 100)]; // "                    " 
+        redBarrier = [vec(0, 80)]; // "                    " 
+        barrierDist = 80;
+        tracker = 100;
+    }
+
+    // Increase the speed based on the score here.
+    if (score > tracker) {
+        scr += 0.05;
+        tracker += 100;
+    }
+
+    // Increase score
+    addScore(0.25);
+
+    color("green")
+    if (input.isPressed) {
+        color("green");
+    } else {
+        color("red");
+    }
+    remove(player, (p) => {
+        box(p, 3);  
+    });
+
+    color("light_green")
+    remove(greenBarrier, (gb) => {
+        gb.y -= scr;
+        rect(gb, 100, 4);
+        if (rect(gb, 100, 4).isColliding.rect.red) {
+            end()
+        }
+        return gb.y < -2;
+    });
+
+    barrierDist -= scr;
+
+    while (barrierDist < 0) {
+        greenBarrier.push(vec(0, 100));
+        barrierDist += rnd(30, 60);
+    }
+
+    color("light_red")
+    remove(redBarrier, (rb) => {
+        rb.y -= scr;
+        rect(rb, 100, 4);
+        if (rect(rb, 100, 4).isColliding.rect.green) {
+            end()
+        }
+        return rb.y < -2;
+    });
+
+    barrierDist -= scr;
+
+    while (barrierDist < 0) {
+        redBarrier.push(vec(0, 100));
+        barrierDist += rnd(30, 60);
+    }
+
+}
+
+addEventListener("load", onLoad);
+</script>
+
+  </head>
+  <body style="background: #ce0f0f"></body>
+</html>
